@@ -1,0 +1,223 @@
+{
+  "name": "My workflow 5",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -368,
+        -32
+      ],
+      "id": "a018f7ca-3a67-467d-bbb0-9b38b816a14f",
+      "name": "Telegram Trigger",
+      "webhookId": "bf658711-f4bd-4de8-9905-9cbf933d4fcf",
+      "credentials": {
+        "telegramApi": {
+          "id": "G7SmkF0OIj2qc9wZ",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -112,
+        -16
+      ],
+      "id": "594ed588-c1e5-4912-9f91-b79017fc1e73",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        192
+      ],
+      "id": "49f6afda-78fd-4e4e-b14d-dcd211a0866f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "vg8oSlpEB66CtrVO",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -112,
+        192
+      ],
+      "id": "b7e92003-c152-4e40-9d4d-265a9389e217",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "pranavnetha329@gmail.com",
+          "mode": "list",
+          "cachedResultName": "pranavnetha329@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "useDefaultReminders": false,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        192
+      ],
+      "id": "d40cfb2e-0baa-4761-8f13-27c7c1a6ea18",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "5y5ytbLXfEzqqxqQ",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "disable_notification": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        -16
+      ],
+      "id": "2335de47-3c44-4feb-82fb-4ba858b622aa",
+      "name": "Send a text message",
+      "webhookId": "fca28e91-e80f-4ee8-9fa2-35ec0d95c178",
+      "credentials": {
+        "telegramApi": {
+          "id": "G7SmkF0OIj2qc9wZ",
+          "name": "Telegram account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Telegram Trigger": [
+      {
+        "json": {
+          "update_id": 866111294,
+          "message": {
+            "message_id": 54,
+            "from": {
+              "id": 5201419202,
+              "is_bot": false,
+              "first_name": "Pranav",
+              "language_code": "en"
+            },
+            "chat": {
+              "id": 5201419202,
+              "first_name": "Pranav",
+              "type": "private"
+            },
+            "date": 1757170520,
+            "text": "one hour"
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "8f5c0581-b0ea-4bae-8d06-2d33b4181134",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f88e769f3fb6f948ccb529216d67858c764f97a22df0ebf39fee98ba558822ba"
+  },
+  "id": "YyLBlfuAJDJCHb6F",
+  "tags": []
+}
